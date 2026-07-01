@@ -38,6 +38,29 @@ async function createWorkout(req, res) {
   try {
     const { title, load, reps } = req.body;
 
+    let emptyFields = [];
+
+    if (title.trim() === '') {
+      emptyFields.push('title');
+    }
+
+    if (!load) {
+      emptyFields.push('load');
+    }
+
+    if (!reps) {
+      emptyFields.push('reps');
+    }
+
+    if (emptyFields.length > 0) {
+      return res
+        .status(400)
+        .json({
+          error: 'Please fill in all the fields properly.',
+          emptyFields,
+        });
+    }
+
     const workout = await Workout.create({ title, load, reps });
 
     res.status(201).json(workout);
